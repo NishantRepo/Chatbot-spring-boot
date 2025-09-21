@@ -1,11 +1,41 @@
 
 server:
-  port: 9080
+  port: 8081
 
 spring:
   application:
     name: chatbot
 
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: spring-boot-client
+            client-secret: 8RpFEBU4AD7PDvkYLZziWgSb8BMG8K1d
+            scope: openid, profile, email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/spring-boot-realm
 python:
   service:
     url: http://localhost:8000
+
+logbook:
+  format:
+    style: http
+  exclude:
+    - /actuator/**    # ignore actuator
+    - /health         # ignore health checks
+  obfuscate:
+    headers:
+      - Authorization # mask sensitive headers
+      - Cookie
+    parameters:
+      - password      # mask password query params
+
+logging:
+  level:
+    org.zalando.logbook: INFO   # shows request + response logs TRACE
+    org.springframework.web: INFO

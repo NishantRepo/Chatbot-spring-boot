@@ -33,7 +33,7 @@ public class ChatController {
         this.restTemplate = new RestTemplate();
     }
 
-    @GetMapping("/")
+    @GetMapping("/chat")
     public String chatPage(Model model, HttpSession session) {
         System.out.println("in controller");
         // Assign a unique ID to the user if they don't have one.

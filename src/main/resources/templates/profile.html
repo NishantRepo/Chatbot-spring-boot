@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Profile</title>
+</head>
+<body>
+<h1>User Profile</h1>
+<p><strong>Name:</strong> <span th:text="${name}"></span></p>
+<p><strong>Email:</strong> <span th:text="${email}"></span></p>
+
+<!--<h3>All Claims:</h3>-->
+<!--<ul>-->
+<!--    <li th:each="entry : ${claims}">-->
+<!--        <strong th:text="${entry.key}"></strong>: <span th:text="${entry.value}"></span>-->
+<!--    </li>-->
+<!--</ul>-->
+<!-- /logout is default spring-boot-security endpoint for logout session-->
+<form action="/logout" method="post">
+    <button type="submit">Logout</button>
+</form>
+</body>
+</html>
