@@ -1,13 +1,20 @@
 package com.nish.demo.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
+
+    public static final String[] UNAUTHENTICATED_URL = {"/", "/login", "/public", "/logout-success", "/chat", "/css/**", "/js/**"};
+
+    @Value("${app.logout.page}")
+    private String logoutPage;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -16,11 +23,11 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/logout") // disables CSRF for /logout
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/public", "/logout-success", "/chat", "/css/**", "/js/**").permitAll()
+                        .requestMatchers(UNAUTHENTICATED_URL).permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth -> oauth
-                        .loginPage("/oauth2/authorization/keycloak") // redirect to Keycloak login
+                        .loginPage(String.format("%s/my-client", OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI)) // redirect to Keycloak login
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout") // endpoint users hit to log out
@@ -31,10 +38,9 @@ public class SecurityConfig {
                             if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser) {
                                 String idToken = oidcUser.getIdToken().getTokenValue();
                                 String issuer = oidcUser.getIssuer().toString();
-                                String redirectUrl = "http://localhost:8081/logout-success";
 
                                 String logoutUrl = issuer + "/protocol/openid-connect/logout?id_token_hint="
-                                        + idToken + "&post_logout_redirect_uri=" + redirectUrl;
+                                        + idToken + "&post_logout_redirect_uri=" + logoutPage;
 
                                 response.sendRedirect(logoutUrl);
                             } else {

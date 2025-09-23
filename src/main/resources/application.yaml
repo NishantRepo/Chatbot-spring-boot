@@ -10,13 +10,13 @@ spring:
     oauth2:
       client:
         registration:
-          keycloak:
+          my-client:
             client-id: spring-boot-client
             client-secret: 8RpFEBU4AD7PDvkYLZziWgSb8BMG8K1d
             scope: openid, profile, email
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
         provider:
-          keycloak:
+          my-client:
             issuer-uri: http://localhost:8080/realms/spring-boot-realm
 python:
   service:
@@ -39,3 +39,7 @@ logging:
   level:
     org.zalando.logbook: INFO   # shows request + response logs TRACE
     org.springframework.web: INFO
+
+app:
+  logout:
+    page: http://localhost:${server.port}/logout-success
